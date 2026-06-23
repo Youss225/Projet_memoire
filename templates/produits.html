@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Produits | PETRO DISTRIBUTIONS</title>
+
+<style>
+
+/* RESET */
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+:root{
+--bleu:#0f172a;
+--bleu2:#1e293b;
+--cyan:#0ea5e9;
+--vert:#10b981;
+--orange:#f59e0b;
+--rouge:#ef4444;
+--blanc:#ffffff;
+--gris:#64748b;
+--fond:#eef4f9;
+--shadow:0 15px 40px rgba(15,23,42,.08);
+}
+
+body{
+font-family:Arial, Helvetica, sans-serif;
+background:linear-gradient(135deg,#eef4f9,#f8fbff);
+display:flex;
+color:#0f172a;
+overflow-x:hidden;
+animation:fadePage .8s ease;
+}
+
+@keyframes fadePage{
+from{opacity:0;transform:translateY(15px);}
+to{opacity:1;transform:translateY(0);}
+}
+
+/* SIDEBAR */
+
+.sidebar{
+width:260px;
+background:linear-gradient(180deg,#0f172a,#1e293b);
+color:white;
+min-height:100vh;
+position:fixed;
+left:0;
+top:0;
+padding:25px 20px;
+box-shadow:6px 0 30px rgba(0,0,0,.15);
+}
+
+.logo{
+text-align:center;
+margin-bottom:28px;
+}
+
+.logo img{
+width:130px;
+border-radius:16px;
+padding:8px;
+background:rgba(255,255,255,.08);
+backdrop-filter:blur(8px);
+transition:.4s;
+}
+
+.logo img:hover{
+transform:scale(1.05);
+}
+
+@keyframes zoomIn{
+from{opacity:0;transform:scale(.8);}
+to{opacity:1;transform:scale(1);}
+}
+
+.sidebar a{
+display:block;
+color:#dbeafe;
+text-decoration:none;
+padding:14px 16px;
+border-radius:14px;
+margin-bottom:10px;
+font-weight:600;
+transition:.3s;
+border:1px solid transparent;
+}
+
+.sidebar a:hover{
+background:linear-gradient(90deg,#2563eb,#06b6d4);
+transform:translateX(6px);
+color:white;
+border-color:rgba(255,255,255,.15);
+}
+
+/* MAIN */
+
+.main{
+margin-left:260px;
+width:100%;
+padding:35px;
+}
+
+.topbar{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:25px;
+gap:15px;
+flex-wrap:wrap;
+}
+
+.topbar h1{
+font-size:32px;
+font-weight:900;
+letter-spacing:.4px;
+animation:slideLeft .8s ease;
+}
+
+@keyframes slideLeft{
+from{opacity:0;transform:translateX(-20px);}
+to{opacity:1;transform:translateX(0);}
+}
+
+.btn-add{
+background:linear-gradient(135deg,var(--vert),#059669);
+color:white;
+padding:14px 20px;
+border:none;
+border-radius:12px;
+cursor:pointer;
+font-weight:bold;
+font-size:15px;
+box-shadow:0 12px 25px rgba(16,185,129,.28);
+transition:.25s;
+}
+
+.btn-add:hover{
+transform:translateY(-3px) scale(1.03);
+}
+
+/* CARD */
+
+.card{
+background:rgba(255,255,255,.9);
+backdrop-filter:blur(8px);
+border-radius:20px;
+padding:22px;
+box-shadow:var(--shadow);
+animation:fadePage .9s ease;
+overflow:auto;
+}
+
+/* TABLE */
+
+table{
+width:100%;
+border-collapse:collapse;
+min-width:650px;
+}
+
+th{
+background:linear-gradient(135deg,#0f172a,#1e293b);
+color:white;
+padding:15px;
+font-size:14px;
+text-transform:uppercase;
+letter-spacing:.5px;
+}
+
+th:first-child{
+border-radius:12px 0 0 12px;
+}
+
+th:last-child{
+border-radius:0 12px 12px 0;
+}
+
+td{
+padding:15px;
+text-align:center;
+border-bottom:1px solid #edf2f7;
+font-weight:600;
+}
+
+tbody tr{
+transition:.25s;
+}
+
+tbody tr:hover{
+background:#f8fafc;
+transform:scale(1.01);
+}
+
+/* BUTTONS */
+
+button{
+border:none;
+padding:10px 12px;
+margin:2px;
+border-radius:10px;
+cursor:pointer;
+font-size:15px;
+font-weight:bold;
+transition:.25s;
+}
+
+button:hover{
+transform:translateY(-2px);
+}
+
+.edit{
+background:linear-gradient(135deg,var(--orange),#d97706);
+color:white;
+}
+
+.delete{
+background:linear-gradient(135deg,var(--rouge),#dc2626);
+color:white;
+}
+
+.save-btn{
+background:linear-gradient(135deg,var(--vert),#059669);
+color:white;
+padding:14px 18px;
+width:100%;
+font-size:15px;
+margin-top:10px;
+}
+
+.close-btn{
+background:linear-gradient(135deg,var(--rouge),#dc2626);
+color:white;
+float:right;
+}
+
+/* MODAL */
+
+.modal{
+display:none;
+position:fixed;
+left:0;
+top:0;
+width:100%;
+height:100%;
+background:rgba(15,23,42,.65);
+z-index:999;
+padding:20px;
+overflow:auto;
+}
+
+.modal-content{
+background:white;
+width:600px;
+max-width:95%;
+margin:40px auto;
+padding:28px;
+border-radius:22px;
+box-shadow:0 30px 60px rgba(0,0,0,.25);
+animation:pop .35s ease;
+}
+
+@keyframes pop{
+from{opacity:0;transform:scale(.85);}
+to{opacity:1;transform:scale(1);}
+}
+
+.modal-content h2{
+margin-bottom:18px;
+font-size:28px;
+}
+
+.modal input{
+width:100%;
+padding:14px;
+margin-bottom:14px;
+border:1px solid #dbe3ee;
+border-radius:12px;
+font-size:15px;
+transition:.2s;
+}
+
+.modal input:focus{
+outline:none;
+border-color:var(--cyan);
+box-shadow:0 0 0 4px rgba(14,165,233,.12);
+}
+
+.empty{
+padding:30px;
+font-weight:bold;
+color:#94a3b8;
+}
+
+/* RESPONSIVE */
+
+@media(max-width:900px){
+
+.sidebar{
+position:relative;
+width:100%;
+min-height:auto;
+}
+
+.main{
+margin-left:0;
+padding:20px;
+}
+
+body{
+flex-direction:column;
+}
+
+table{
+min-width:100%;
+}
+
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+
+<div class="sidebar">
+
+<div class="logo">
+<img src="/media/Logo.jpg" onerror="this.style.display='none'">
+</div>
+
+{% if request.user.is_superuser %}
+<a href="/">🏠 Dashboard</a>
+<a href="/factures/">📄 Factures</a>
+<a href="/clients/">👥 Clients</a>
+<a href="/produits/">📦 Produits</a>
+<a href="/avitaillement/">⛽ Avitaillements</a>
+{% endif %}
+
+{% if request.user.groups.all.0.name == "Comptable" %}
+<a href="/">🏠 Dashboard</a>
+<a href="/factures/">📄 Factures</a>
+<a href="/clients/">👥 Clients</a>
+{% endif %}
+
+{% if request.user.groups.all.0.name == "Operateurs" %}
+<a href="/">🏠 Dashboard</a>
+<a href="/produits/">📦 Produits</a>
+<a href="/avitaillement/">⛽ Avitaillements</a>
+{% endif %}
+
+</div>
+
+<!-- MAIN -->
+
+<div class="main">
+
+<div class="topbar">
+<h1>Gestion des Produits</h1>
+
+<button class="btn-add" onclick="ouvrirModal()">
+➕ Nouveau Produit
+</button>
+</div>
+
+<div class="card">
+
+<table>
+
+<thead>
+<tr>
+<th>ID</th>
+<th>Nom</th>
+<th>Prix</th>
+<th>Actions</th>
+</tr>
+</thead>
+
+<tbody id="produitsTable"></tbody>
+
+</table>
+
+</div>
+
+</div>
+
+<!-- MODAL -->
+
+<div class="modal" id="modalProduit">
+
+<div class="modal-content">
+
+<button class="close-btn" onclick="fermerModal()">❌</button>
+
+<h2 id="titreModal">Nouveau Produit</h2>
+
+<input type="text" id="nom" placeholder="Nom du produit">
+
+<input type="number" id="prix" placeholder="Prix">
+
+<button class="save-btn" onclick="saveProduit()">
+💾 Enregistrer
+</button>
+
+</div>
+
+</div>
+
+<script>
+
+let editId = null;
+
+chargerProduits();
+
+function chargerProduits(){
+
+fetch("/api/produits/")
+.then(res=>res.json())
+.then(data=>{
+
+let table = document.getElementById("produitsTable");
+table.innerHTML = "";
+
+if(data.length === 0){
+table.innerHTML = `
+<tr>
+<td colspan="4" class="empty">
+Aucun produit disponible
+</td>
+</tr>
+`;
+return;
+}
+
+data.forEach(p=>{
+
+table.innerHTML += `
+<tr>
+<td>${p.id}</td>
+<td>${p.nom || ''}</td>
+<td>${Number(p.prix || 0).toLocaleString()} FCFA</td>
+
+<td>
+
+<button class="edit"
+onclick="modifierProduit(${p.id})">
+✍️
+</button>
+
+<button class="delete"
+onclick="deleteProduit(${p.id})">
+🗑️
+</button>
+
+</td>
+</tr>
+`;
+
+});
+
+});
+
+}
+
+function ouvrirModal(){
+
+document.getElementById("modalProduit").style.display="block";
+
+if(!editId){
+
+document.getElementById("titreModal").innerText = "Nouveau Produit";
+
+document.getElementById("nom").value = "";
+document.getElementById("prix").value = "";
+
+}
+
+}
+
+function fermerModal(){
+
+document.getElementById("modalProduit").style.display="none";
+editId = null;
+
+}
+
+function modifierProduit(id){
+
+fetch(`/api/produits/${id}/`)
+.then(res=>res.json())
+.then(p=>{
+
+editId = id;
+
+ouvrirModal();
+
+document.getElementById("titreModal").innerText = "Modifier Produit";
+
+document.getElementById("nom").value = p.nom || "";
+document.getElementById("prix").value = p.prix || "";
+
+});
+
+}
+
+function getCookie(name) {
+
+let cookieValue = null;
+
+if (document.cookie && document.cookie !== "") {
+
+const cookies = document.cookie.split(";");
+
+for (let i = 0; i < cookies.length; i++) {
+
+const cookie = cookies[i].trim();
+
+if (cookie.substring(0, name.length + 1) === (name + "=")) {
+
+cookieValue = decodeURIComponent(
+cookie.substring(name.length + 1)
+);
+
+break;
+}
+
+}
+}
+
+return cookieValue;
+}
+
+function saveProduit(){
+
+let data = {
+nom: document.getElementById("nom").value,
+prix: Number(document.getElementById("prix").value)
+};
+
+let url = "/api/produits/";
+let method = "POST";
+
+if(editId){
+url = `/api/produits/${editId}/`;
+method = "PUT";
+}
+
+fetch(url,{
+method: method,
+headers:{
+"Content-Type":"application/json",
+"X-CSRFToken": getCookie("csrftoken")
+},
+body: JSON.stringify(data)
+})
+.then(res=>{
+
+if(!res.ok){
+throw new Error("Erreur HTTP : " + res.status);
+}
+
+return res.json();
+})
+.then(()=>{
+
+chargerProduits();
+fermerModal();
+
+})
+.catch(err=>{
+
+console.error(err);
+alert(err);
+
+});
+
+}
+
+function deleteProduit(id){
+
+if(confirm("Supprimer ce produit ?")){
+
+fetch(`/api/produits/${id}/`,{
+method:"DELETE",
+headers:{
+"X-CSRFToken": getCookie("csrftoken")
+}
+})
+.then(()=>chargerProduits());
+
+}
+
+}
+
+</script>
+
+</body>
+</html>

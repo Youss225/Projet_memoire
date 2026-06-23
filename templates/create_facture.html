@@ -1,0 +1,411 @@
+<!-- templates/create_facture.html -->
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Nouvelle Facture</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+body{
+font-family:Arial, Helvetica, sans-serif;
+background:#f4f6f9;
+display:flex;
+}
+
+/* SIDEBAR */
+
+.sidebar{
+width:260px;
+background:#1f2d3d;
+color:white;
+min-height:100vh;
+padding:25px 20px;
+position:fixed;
+left:0;
+top:0;
+}
+
+.logo{
+text-align:center;
+margin-bottom:25px;
+}
+
+.logo img{
+width:120px;
+margin-bottom:10px;
+}
+
+.logo h2{
+font-size:18px;
+line-height:1.4;
+}
+
+.sidebar a{
+display:block;
+color:white;
+text-decoration:none;
+padding:12px;
+margin-bottom:8px;
+border-radius:8px;
+}
+
+.sidebar a:hover{
+background:#34495e;
+}
+
+/* MAIN */
+
+.main{
+margin-left:260px;
+width:100%;
+padding:30px;
+}
+
+.card{
+background:white;
+padding:25px;
+border-radius:14px;
+box-shadow:0 5px 20px rgba(0,0,0,.08);
+}
+
+h1{
+margin-bottom:20px;
+color:#1f2d3d;
+}
+
+.grid{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:15px;
+margin-bottom:20px;
+}
+
+input, select{
+width:100%;
+padding:12px;
+border:1px solid #ccc;
+border-radius:8px;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+margin-top:20px;
+}
+
+th{
+background:#2c3e50;
+color:white;
+padding:12px;
+}
+
+td{
+padding:10px;
+border-bottom:1px solid #eee;
+text-align:center;
+}
+
+button{
+border:none;
+padding:10px 15px;
+border-radius:8px;
+cursor:pointer;
+font-weight:bold;
+}
+
+.add{
+background:#3498db;
+color:white;
+margin-top:15px;
+}
+
+.save{
+background:#27ae60;
+color:white;
+margin-top:20px;
+width:100%;
+padding:14px;
+font-size:16px;
+}
+
+.delete{
+background:#e74c3c;
+color:white;
+}
+
+.totalbox{
+margin-top:20px;
+text-align:right;
+font-size:20px;
+font-weight:bold;
+color:#1f2d3d;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="sidebar">
+
+<div class="logo">
+<img src="/media/Logo.jpg">
+<h2>PETRO<br>DISTRIBUTIONS</h2>
+</div>
+
+<a href="/">🏠 Dashboard</a>
+<a href="/factures/">📄 Factures</a>
+<a href="/clients/">👥 Clients</a>
+<a href="/produits/">📦 Produits</a>
+
+</div>
+
+<div class="main">
+
+<div class="card">
+
+<h1>Créer une Facture</h1>
+
+<!-- INFOS FACTURE -->
+
+<div class="grid">
+
+<input type="text" id="reference" placeholder="Référence Facture">
+
+<select id="client"></select>
+
+<input type="date" id="date_limite">
+
+<input type="date" id="date_livraison">
+
+<input type="number" id="tva" placeholder="TVA %" value="18">
+
+<input type="number" id="remise" placeholder="Remise %" value="0">
+
+</div>
+
+<!-- PRODUITS -->
+
+<table id="tableProduits">
+
+<thead>
+<tr>
+<th>Produit</th>
+<th>Prix</th>
+<th>Qté</th>
+<th>Total</th>
+<th>Action</th>
+</tr>
+</thead>
+
+<tbody></tbody>
+
+</table>
+
+<button class="add" onclick="ajouterLigne()">+ Ajouter Produit</button>
+
+<div class="totalbox">
+TOTAL : <span id="grandTotal">0</span> FCFA
+</div>
+
+<button class="save" onclick="enregistrerFacture()">
+ENREGISTRER FACTURE
+</button>
+
+</div>
+</div>
+
+<script>
+
+let produits = [];
+
+chargerClients();
+chargerProduits();
+ajouterLigne();
+
+/* CLIENTS */
+
+function chargerClients(){
+
+fetch("/api/clients/")
+.then(r=>r.json())
+.then(data=>{
+
+let select=document.getElementById("client");
+
+select.innerHTML="<option value=''>Choisir Client</option>";
+
+data.forEach(c=>{
+select.innerHTML += `
+<option value="${c.id}">
+${c.nom}
+</option>`;
+});
+
+});
+
+}
+
+/* PRODUITS */
+
+function chargerProduits(){
+
+fetch("/api/produits/")
+.then(r=>r.json())
+.then(data=>{
+produits=data;
+});
+
+}
+
+/* LIGNE */
+
+function ajouterLigne(){
+
+let tbody=document.querySelector("#tableProduits tbody");
+
+tbody.innerHTML += `
+<tr>
+
+<td>
+<select onchange="calculer()">
+<option value="">Produit</option>
+${produits.map(p=>`
+<option value="${p.id}" data-prix="${p.prix}">
+${p.nom}
+</option>`).join("")}
+</select>
+</td>
+
+<td>
+<input type="number" readonly value="0">
+</td>
+
+<td>
+<input type="number" min="1" value="1" onchange="calculer()">
+</td>
+
+<td class="ligneTotal">0</td>
+
+<td>
+<button class="delete" onclick="this.parentNode.parentNode.remove();calculer();">
+X
+</button>
+</td>
+
+</tr>
+`;
+
+}
+
+/* CALCUL */
+
+function calculer(){
+
+let rows=document.querySelectorAll("#tableProduits tbody tr");
+
+let total=0;
+
+rows.forEach(row=>{
+
+let select=row.cells[0].querySelector("select");
+let prixInput=row.cells[1].querySelector("input");
+let qte=row.cells[2].querySelector("input");
+
+let option=select.options[select.selectedIndex];
+
+let prix=option.getAttribute("data-prix") || 0;
+
+prixInput.value=prix;
+
+let ligne = Number(prix) * Number(qte.value);
+
+row.querySelector(".ligneTotal").innerText=ligne;
+
+total += ligne;
+
+});
+
+let tva = Number(document.getElementById("tva").value);
+let remise = Number(document.getElementById("remise").value);
+
+total = total + (total*tva/100);
+total = total - (total*remise/100);
+
+document.getElementById("grandTotal").innerText =
+total.toLocaleString();
+
+}
+
+/* EVENTS */
+
+document.getElementById("tva").oninput=calculer;
+document.getElementById("remise").oninput=calculer;
+
+/* SAVE */
+
+function enregistrerFacture(){
+
+let rows=document.querySelectorAll("#tableProduits tbody tr");
+
+let lignes=[];
+
+rows.forEach(row=>{
+
+let produit=row.cells[0].querySelector("select").value;
+let qte=row.cells[2].querySelector("input").value;
+
+if(produit){
+lignes.push({
+produit:produit,
+quantite:qte
+});
+}
+
+});
+
+fetch("/api/factures/",{
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({
+
+reference:document.getElementById("reference").value,
+client:document.getElementById("client").value,
+date_limite:document.getElementById("date_limite").value,
+date_livraison:document.getElementById("date_livraison").value,
+total:document.getElementById("grandTotal").innerText.replace(/,/g,''),
+
+lignes:lignes
+
+})
+
+})
+
+.then(r=>r.json())
+.then(data=>{
+
+alert("Facture créée avec succès");
+
+window.location.href="/factures/";
+
+});
+
+}
+
+</script>
+
+</body>
+</html>

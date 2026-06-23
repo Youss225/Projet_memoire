@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Connexion | PETRO DISTRIBUTIONS</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial, Helvetica, sans-serif;
+}
+
+body{
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+background:
+linear-gradient(rgba(9,25,48,.82),rgba(9,25,48,.82)),
+url("/media/Logo.jpg");
+background-size:cover;
+background-position:center;
+overflow:hidden;
+}
+
+.container{
+width:420px;
+background:rgba(255,255,255,.95);
+backdrop-filter:blur(15px);
+padding:40px;
+border-radius:22px;
+box-shadow:0 25px 50px rgba(0,0,0,.35);
+animation:fadeIn .8s ease;
+}
+
+@keyframes fadeIn{
+from{
+opacity:0;
+transform:translateY(25px);
+}
+to{
+opacity:1;
+transform:translateY(0);
+}
+}
+
+.logo{
+text-align:center;
+margin-bottom:20px;
+}
+
+.logo img{
+width:120px;
+height:120px;
+object-fit:contain;
+border-radius:18px;
+background:white;
+padding:8px;
+box-shadow:0 10px 25px rgba(0,0,0,.15);
+}
+
+h1{
+text-align:center;
+font-size:28px;
+color:#0f172a;
+margin-bottom:8px;
+}
+
+.subtitle{
+text-align:center;
+color:#64748b;
+font-size:14px;
+margin-bottom:30px;
+line-height:1.5;
+}
+
+.input-group{
+margin-bottom:18px;
+}
+
+label{
+display:block;
+margin-bottom:8px;
+font-weight:bold;
+color:#334155;
+}
+
+input{
+width:100%;
+padding:14px;
+border:1px solid #dbe3ee;
+border-radius:12px;
+font-size:15px;
+transition:.3s;
+background:#f8fafc;
+}
+
+input:focus{
+outline:none;
+border-color:#2563eb;
+box-shadow:0 0 15px rgba(37,99,235,.15);
+background:white;
+}
+
+button{
+width:100%;
+padding:14px;
+border:none;
+border-radius:12px;
+background:linear-gradient(90deg,#2563eb,#1d4ed8);
+color:white;
+font-size:16px;
+font-weight:bold;
+cursor:pointer;
+transition:.3s;
+margin-top:10px;
+}
+
+button:hover{
+transform:translateY(-2px);
+box-shadow:0 10px 25px rgba(37,99,235,.35);
+}
+
+.error{
+background:#fee2e2;
+color:#b91c1c;
+padding:12px;
+border-radius:10px;
+margin-bottom:20px;
+text-align:center;
+font-size:14px;
+}
+
+.footer{
+text-align:center;
+margin-top:25px;
+font-size:12px;
+color:#94a3b8;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="logo">
+<img src="/media/Logo.jpg" alt="Logo PETRO DISTRIBUTIONS">
+</div>
+
+<h1>PETRO DISTRIBUTIONS</h1>
+
+<p class="subtitle">
+Système Intelligent de Gestion Commerciale<br>
+Facturation • Stocks • Avitaillements
+</p>
+
+{% if error %}
+<div class="error">
+{{ error }}
+</div>
+{% endif %}
+
+<form method="POST">
+
+{% csrf_token %}
+
+<div class="input-group">
+<label>Nom d'utilisateur</label>
+<input
+type="text"
+name="username"
+placeholder="Entrez votre identifiant"
+required>
+</div>
+
+<div class="input-group">
+<label>Mot de passe</label>
+<input
+type="password"
+name="password"
+placeholder="Entrez votre mot de passe"
+required>
+</div>
+
+<button type="submit">
+🔐 Se connecter
+</button>
+
+</form>
+
+<div class="footer">
+© 2026 PETRO DISTRIBUTIONS<br>
+ERP Commercial Professionnel
+</div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Facture PETRO DISTRIBUTIONS</title>
+
+<style>
+@page{
+    size:A4;
+    margin:15mm;
+}
+
+body{
+    font-family:Arial, Helvetica, sans-serif;
+    color:#222;
+    font-size:13px;
+    margin:0;
+    padding:0;
+}
+
+.container{
+    width:100%;
+    position:relative;
+}
+
+/* HEADER */
+
+.header{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    border-bottom:3px solid #0b63ce;
+    padding-bottom:12px;
+    margin-bottom:18px;
+}
+
+.left-head{
+    width:55%;
+}
+
+.left-head img{
+    width:120px;
+    margin-bottom:8px;
+}
+
+.company{
+    font-size:26px;
+    font-weight:bold;
+    color:#1f2d3d;
+    margin-bottom:6px;
+}
+
+.company-sub{
+    font-size:12px;
+    line-height:1.6;
+    color:#555;
+}
+
+.right-head{
+    width:40%;
+    text-align:right;
+}
+
+.facture-title{
+    font-size:28px;
+    font-weight:bold;
+    color:#0b63ce;
+    margin-bottom:10px;
+}
+
+.ref-box{
+    background:#f4f7fb;
+    padding:10px;
+    border-radius:8px;
+    line-height:1.7;
+}
+
+/* INFOS */
+
+.section{
+    margin-top:15px;
+    margin-bottom:15px;
+}
+
+.row{
+    display:flex;
+    justify-content:space-between;
+    gap:20px;
+}
+
+.box{
+    width:48%;
+    background:#fafafa;
+    border:1px solid #e5e5e5;
+    border-radius:8px;
+    padding:12px;
+}
+
+.box-title{
+    font-weight:bold;
+    color:#0b63ce;
+    margin-bottom:8px;
+    font-size:14px;
+}
+
+/* TABLE */
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:18px;
+}
+
+th{
+    background:#1f2d3d;
+    color:white;
+    padding:10px;
+    font-size:12px;
+    text-align:center;
+}
+
+td{
+    padding:10px;
+    border-bottom:1px solid #ddd;
+    text-align:center;
+}
+
+tr:nth-child(even){
+    background:#fafafa;
+}
+
+/* TOTAL */
+
+.total-zone{
+    margin-top:20px;
+    width:100%;
+}
+
+.total-box{
+    width:320px;
+    margin-left:auto;
+    border:1px solid #ddd;
+    border-radius:8px;
+    overflow:hidden;
+}
+
+.total-line{
+    display:flex;
+    justify-content:space-between;
+    padding:10px 14px;
+    border-bottom:1px solid #eee;
+}
+
+.grand-total{
+    background:#0b63ce;
+    color:white;
+    font-size:18px;
+    font-weight:bold;
+}
+
+/* SIGN */
+
+.sign{
+    margin-top:35px;
+    text-align:right;
+}
+
+.sign-box{
+    display:inline-block;
+    text-align:center;
+    width:220px;
+}
+
+/* QR CODE */
+
+.qr-zone{
+    margin-top:25px;
+    text-align:right;
+}
+
+.qr-zone img{
+    width:110px;
+    height:110px;
+    border:1px solid #ddd;
+    padding:4px;
+}
+
+.qr-text{
+    font-size:11px;
+    color:#666;
+    margin-top:4px;
+}
+
+/* FOOTER */
+
+.footer{
+    margin-top:25px;
+    border-top:2px solid #ddd;
+    padding-top:15px;
+    font-size:12px;
+    color:#555;
+}
+
+/* CACHET */
+
+.paid{
+    position:absolute;
+    top:340px;
+    left:180px;
+    transform:rotate(-18deg);
+    border:4px solid red;
+    color:red;
+    font-size:42px;
+    font-weight:bold;
+    padding:8px 25px;
+    opacity:0.18;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<!--<div class="paid">PAYÉ</div>-->
+
+<!-- HEADER -->
+<div class="header">
+
+<div class="left-head">
+
+<img src="{{ logo_url }}">
+
+
+
+<div class="company-sub">
+Distribution de Produits Pétroliers<br>
+Abidjan - Côte d'Ivoire<br>
+Tél : +225 07 59 59 57 89<br>
+Email : contact@petro-distributions.ci
+</div>
+
+</div>
+
+<div class="right-head">
+
+<div class="facture-title">
+FACTURE
+</div>
+
+<div class="ref-box">
+<strong>N° :</strong> {{ facture.reference }}<br>
+<strong>Date :</strong> {{ facture.date }}<br>
+<strong>Échéance :</strong> {{ facture.date_limite }}
+</div>
+
+</div>
+
+</div>
+
+<!-- CLIENT -->
+<div class="section">
+
+<div class="row">
+
+<div class="box">
+<div class="box-title">FACTURÉ À</div>
+
+<strong>{{ client.nom }}</strong><br>
+
+{% if client.telephone %}
+Tél : {{ client.telephone }}<br>
+{% endif %}
+
+{% if client.email %}
+Email : {{ client.email }}<br>
+{% endif %}
+
+{% if client.adresse %}
+Adresse : {{ client.adresse }}
+{% endif %}
+</div>
+
+<div class="box">
+<div class="box-title">LIVRAISON</div>
+
+Date livraison : {{ facture.date_livraison }}<br>
+Mode paiement : Espèces / Virement<br>
+Devise : FCFA
+</div>
+
+</div>
+
+</div>
+
+<!-- TABLEAU -->
+<table>
+
+<thead>
+<tr>
+<th>#</th>
+<th>Désignation</th>
+<th>Quantité</th>
+<th>Prix Unitaire</th>
+<th>Montant</th>
+</tr>
+</thead>
+
+<tbody>
+
+{% for ligne in lignes %}
+<tr>
+<td>{{ forloop.counter }}</td>
+<td>{{ ligne.produit.nom }}</td>
+<td>{{ ligne.quantite }}</td>
+<td>{{ ligne.prix_unitaire }}</td>
+<td>{{ ligne.montant }}</td>
+</tr>
+{% endfor %}
+
+</tbody>
+
+</table>
+
+<!-- TOTAL -->
+<div class="total-zone">
+
+<div class="total-box">
+
+<div class="total-line">
+<span>Sous-total</span>
+<span>{{ facture.total }} FCFA</span>
+</div>
+
+<div class="total-line">
+<span>TVA</span>
+<span>0 FCFA</span>
+</div>
+
+<div class="total-line grand-total">
+<span>TOTAL</span>
+<span>{{ facture.total }} FCFA</span>
+</div>
+
+</div>
+
+</div>
+
+<!-- SIGNATURE -->
+<div class="sign">
+
+<div class="sign-box">
+Signature & Cachet<br><br><br><br>
+_________________
+</div>
+
+</div>
+
+<!-- QR CODE 
+<div class="qr-zone">
+<img src="{{ qr_code }}">
+<div class="qr-text">
+Scanner pour vérifier
+</div>-->
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+Merci pour votre confiance.<br>
+PETRO DISTRIBUTIONS - Solution Professionnelle de Facturation.
+</div>
+
+</div>
+
+</body>
+</html>

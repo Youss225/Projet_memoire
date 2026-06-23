@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Dashboard Facturation</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+:root{
+--bleu:#0b63ce;
+--bleu2:#1f2d3d;
+--vert:#27ae60;
+--violet:#8e44ad;
+--orange:#f39c12;
+--red:#ac0909;
+--fond:#eef3f8;
+--blanc:#ffffff;
+--texte:#1d2430;
+}
+
+body{
+font-family:Arial, Helvetica, sans-serif;
+display:flex;
+background:
+radial-gradient(circle at top right,#dfefff,transparent 35%),
+radial-gradient(circle at bottom left,#dff7ea,transparent 35%),
+linear-gradient(135deg,#eef3f8,#f8fbff);
+color:var(--texte);
+min-height:100vh;
+animation:fadeIn .7s ease;
+overflow-x:hidden;
+}
+
+@keyframes fadeIn{
+from{
+opacity:0;
+transform:translateY(10px);
+}
+to{
+opacity:1;
+transform:translateY(0);
+}
+}
+
+/* SIDEBAR */
+
+.sidebar{
+width:260px;
+min-height:100vh;
+position:fixed;
+left:0;
+top:0;
+padding:28px 20px;
+background:linear-gradient(180deg,#0f172a,#111827,#1e293b);
+color:white;
+box-shadow:10px 0 35px rgba(0,0,0,.18);
+z-index:999;
+}
+
+.logo{
+text-align:center;
+margin-bottom:28px;
+}
+
+.logo img{
+width:130px;
+border-radius:16px;
+padding:8px;
+background:rgba(255,255,255,.08);
+backdrop-filter:blur(8px);
+transition:.4s;
+}
+
+.logo img:hover{
+transform:scale(1.05);
+}
+
+.sidebar a{
+display:block;
+color:#dbeafe;
+text-decoration:none;
+padding:14px 16px;
+border-radius:14px;
+margin-bottom:10px;
+font-weight:600;
+transition:.3s;
+border:1px solid transparent;
+}
+
+.sidebar a:hover{
+background:linear-gradient(90deg,#2563eb,#06b6d4);
+transform:translateX(6px);
+color:white;
+border-color:rgba(255,255,255,.15);
+}
+
+/* MAIN */
+
+.main{
+margin-left:270px;
+padding:30px;
+width:100%;
+}
+
+/* TOP HERO */
+
+.hero{
+background:
+linear-gradient(135deg,#0b63ce,#124c97);
+border-radius:24px;
+padding:32px;
+color:white;
+box-shadow:0 20px 40px rgba(11,99,206,.25);
+position:relative;
+overflow:hidden;
+margin-bottom:28px;
+animation:slideDown .8s ease;
+}
+
+.hero::before{
+content:"";
+position:absolute;
+width:280px;
+height:280px;
+border-radius:50%;
+background:rgba(255,255,255,.08);
+right:-80px;
+top:-80px;
+}
+
+.hero::after{
+content:"";
+position:absolute;
+width:180px;
+height:180px;
+border-radius:50%;
+background:rgba(255,255,255,.06);
+right:120px;
+bottom:-70px;
+}
+
+@keyframes slideDown{
+from{
+opacity:0;
+transform:translateY(-18px);
+}
+to{
+opacity:1;
+transform:translateY(0);
+}
+}
+
+.hero h1{
+font-size:30px;
+margin-bottom:10px;
+position:relative;
+z-index:2;
+}
+
+.hero p{
+font-size:15px;
+opacity:.95;
+line-height:1.7;
+position:relative;
+z-index:2;
+}
+
+.badge{
+display:inline-block;
+margin-top:18px;
+background:rgba(255,255,255,.14);
+padding:10px 16px;
+border-radius:30px;
+font-size:14px;
+font-weight:bold;
+position:relative;
+z-index:2;
+}
+
+/* GRID */
+
+.cards{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+gap:22px;
+}
+
+/* CARD */
+
+.card{
+background:rgba(255,255,255,.82);
+backdrop-filter:blur(10px);
+border-radius:22px;
+padding:28px;
+box-shadow:0 18px 35px rgba(0,0,0,.08);
+transition:.3s;
+position:relative;
+overflow:hidden;
+animation:cardUp .8s ease;
+border:1px solid rgba(255,255,255,.55);
+}
+
+@keyframes cardUp{
+from{
+opacity:0;
+transform:translateY(30px);
+}
+to{
+opacity:1;
+transform:translateY(0);
+}
+}
+
+.card:hover{
+transform:translateY(-8px) scale(1.02);
+box-shadow:0 24px 45px rgba(0,0,0,.12);
+}
+
+.card::before{
+content:"";
+position:absolute;
+top:0;
+left:0;
+width:100%;
+height:6px;
+background:linear-gradient(90deg,var(--bleu),#4aa3ff);
+}
+
+.card.green::before{
+background:linear-gradient(90deg,var(--vert),#09ac1c);
+}
+
+.card.purple::before{
+background:linear-gradient(90deg,var(--violet),#b66bff);
+}
+
+.card.orange::before{
+background:linear-gradient(90deg,var(--orange),#ffb347);
+}
+
+.card.red::before{
+background:linear-gradient(90deg,var(--red),#ac0909);
+}
+
+.icon{
+font-size:34px;
+margin-bottom:18px;
+}
+
+.card h3{
+font-size:18px;
+margin-bottom:12px;
+color:#2c3e50;
+}
+
+.number{
+font-size:44px;
+font-weight:900;
+margin-bottom:10px;
+color:var(--bleu);
+}
+
+.green .number{
+color:var(--vert);
+}
+
+.purple .number{
+color:var(--violet);
+}
+
+.orange .number{
+color:var(--orange);
+font-size:34px;
+}
+
+.red .number{
+color: var(--red);
+}
+
+.label{
+font-size:14px;
+color:#6b7280;
+line-height:1.5;
+}
+
+/* FOOT */
+
+.footer-note{
+margin-top:28px;
+text-align:center;
+font-size:13px;
+color:#6b7280;
+}
+
+/* RESPONSIVE */
+
+@media(max-width:900px){
+
+.sidebar{
+width:230px;
+}
+
+.main{
+margin-left:230px;
+padding:20px;
+}
+
+.hero h1{
+font-size:24px;
+}
+
+}
+
+@media(max-width:700px){
+
+body{
+display:block;
+}
+
+.sidebar{
+position:relative;
+width:100%;
+min-height:auto;
+}
+
+.main{
+margin-left:0;
+padding:16px;
+}
+
+.hero{
+padding:24px;
+}
+
+.hero h1{
+font-size:22px;
+}
+
+.number{
+font-size:38px;
+}
+
+}
+
+.logout-btn{
+background:linear-gradient(90deg,#dc2626,#b91c1c);
+color:white !important;
+text-align:center;
+font-weight:bold;
+margin-top:15px;
+}
+
+.logout-btn:hover{
+background:linear-gradient(90deg,#ef4444,#dc2626);
+transform:translateX(6px);
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+
+<div class="sidebar">
+
+<div class="logo">
+<img src="/media/Logo.jpg">
+</div>
+
+<div class="menu">
+{% if request.user.is_superuser %}
+<a href="/">🏠 Dashboard</a>
+<a href="/factures/">📄 Factures</a>
+<a href="/clients/">👥 Clients</a>
+<a href="/produits/">📦 Produits</a>
+<a href="/avitaillement/">⛽ Avitaillements</a>
+{% endif %}
+
+{% if request.user.groups.all.0.name == "Comptable" %}
+<a href="/">🏠 Dashboard</a>
+<a href="/factures/">📄 Factures</a>
+<a href="/clients/">👥 Clients</a>
+{% endif %}
+
+{% if request.user.groups.all.0.name == "Operateurs" %}
+<a href="/">🏠 Dashboard</a>
+<a href="/produits/">📦 Produits</a>
+<a href="/avitaillement/">⛽ Avitaillements</a>
+{% endif %}
+
+
+<hr style="margin:20px 0;border:1px solid rgba(255,255,255,.1);">
+
+<a href="/logout/" class="logout-btn">
+🚪 Déconnexion
+</a>
+</div>
+
+</div>
+
+<!-- MAIN -->
+
+<div class="main">
+
+<div class="hero">
+<h1>Bienvenue <span>{{ request.user.username }}</span> sur PETRO DISTRIBUTIONS</h1>
+<p>
+Plateforme intelligente de gestion commerciale, facturation
+et suivi des opérations.
+</p>
+<div class="badge">🚀 Dashboard Exécutif</div>
+</div>
+
+<div class="cards">
+
+<div class="card">
+<div class="icon">📄</div>
+<h3>Factures</h3>
+<div class="number" id="nbFactures">0</div>
+<div class="label">Factures enregistrées dans le système</div>
+</div>
+
+<div class="card green">
+<div class="icon">👥</div>
+<h3>Clients</h3>
+<div class="number" id="nbClients">0</div>
+<div class="label">Portefeuille clients actif</div>
+</div>
+
+<div class="card purple">
+<div class="icon">📦</div>
+<h3>Produits</h3>
+<div class="number" id="nbProduits">0</div>
+<div class="label">Catalogue produits disponible</div>
+</div>
+
+<div class="card orange">
+<div class="icon">💰</div>
+<h3>Chiffre d'Affaire</h3>
+<div class="number" id="chiffreAffaire">0 FCFA</div>
+<div class="label">Montant total facturé</div>
+</div>
+
+<div class="card red">
+<div class="icon">🧾</div>
+<h3>Stocks</h3>
+<div class="number" id="stocks">0 L</div>
+<div class="label">Quantité des produits restants</div>
+</div>
+
+</div>
+
+<div class="footer-note">
+PETRO DISTRIBUTIONS • ERP Commercial  Professionnel
+</div>
+{% if request.user.is_superuser %}
+
+<div style="
+margin-top:40px;
+background:white;
+padding:25px;
+border-radius:20px;
+box-shadow:0 10px 25px rgba(0,0,0,.08);
+">
+
+<h2 style="margin-bottom:20px;">
+📝 Journal des activités
+</h2>
+
+<table style="width:100%;border-collapse:collapse;">
+
+<tr style="background:#f3f4f6;">
+<th style="padding:12px;">Utilisateur</th>
+<th style="padding:12px;">Action</th>
+<th style="padding:12px;">Date</th>
+<th style="padding:12px;">IP</th>
+</tr>
+
+{% for a in activites %}
+
+<tr>
+<td style="padding:10px;text-align:center;">
+{{ a.utilisateur }}
+</td>
+
+<td style="padding:10px;text-align:center;">
+{{ a.action }}
+</td>
+
+<td style="padding:10px;text-align:center;">
+{{ a.date_action|date:"d/m/Y H:i" }}
+</td>
+
+<td style="padding:10px;text-align:center;">
+{{ a.adresse_ip }}
+</td>
+</tr>
+
+{% empty %}
+
+<tr>
+<td colspan="4" style="padding:20px;text-align:center;">
+Aucune activité enregistrée.
+</td>
+</tr>
+
+{% endfor %}
+
+</table>
+
+</div>
+
+{% endif %}
+
+</div>
+
+<script>
+
+/* FACTURES + CHIFFRE D'AFFAIRE */
+fetch("/api/factures/")
+.then(res=>res.json())
+.then(data=>{
+
+document.getElementById("nbFactures").innerText = data.length;
+
+let total = 0;
+
+data.forEach(f=>{
+total += Number(f.total || 0);
+});
+
+document.getElementById("chiffreAffaire").innerText =
+total.toLocaleString() + " FCFA";
+
+});
+
+/* CLIENTS */
+fetch("/api/clients/")
+.then(res=>res.json())
+.then(data=>{
+document.getElementById("nbClients").innerText = data.length;
+});
+
+/* PRODUITS */
+fetch("/api/produits/")
+.then(res=>res.json())
+.then(data=>{
+document.getElementById("nbProduits").innerText = data.length;
+});
+
+/* STOCKS */
+
+fetch("/api/stocks/resume/")
+.then(res => res.json())
+.then(data => {
+    document.getElementById("stocks").innerText =
+        Number(data.total_stock).toLocaleString() + " L";
+});
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Camions | PETRO DISTRIBUTIONS</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+
+body{
+font-family:Arial;
+background:#f4f6f9;
+display:flex;
+}
+
+/* SIDEBAR */
+.sidebar{
+width:260px;
+background:#1f2d3d;
+color:white;
+min-height:100vh;
+padding:25px;
+position:fixed;
+}
+
+.logo{
+text-align:center;
+margin-bottom:28px;
+}
+
+.logo img{
+width:130px;
+border-radius:16px;
+padding:8px;
+background:rgba(255,255,255,.08);
+backdrop-filter:blur(8px);
+transition:.4s;
+}
+
+.logo img:hover{
+transform:scale(1.05);
+}
+
+.sidebar a{
+display:block;
+color:white;
+padding:12px;
+margin-bottom:8px;
+border-radius:8px;
+text-decoration:none;
+}
+
+.sidebar a:hover{
+background:#3498db;
+transform:translateX(5px);
+}
+
+/* MAIN */
+.main{
+margin-left:260px;
+padding:30px;
+width:100%;
+}
+
+/* TOP */
+.topbar{
+display:flex;
+justify-content:space-between;
+margin-bottom:25px;
+}
+
+.btn-add{
+background:#27ae60;
+color:white;
+padding:12px 18px;
+border:none;
+border-radius:8px;
+cursor:pointer;
+}
+
+/* STATS */
+.stats{
+display:flex;
+gap:15px;
+margin-bottom:20px;
+}
+
+.box{
+flex:1;
+background:white;
+padding:20px;
+border-radius:12px;
+box-shadow:0 5px 20px rgba(0,0,0,.08);
+}
+
+.box h3{
+font-size:14px;
+color:#888;
+}
+
+.box p{
+font-size:22px;
+font-weight:bold;
+}
+
+/* CARD */
+.card{
+background:white;
+padding:20px;
+border-radius:12px;
+box-shadow:0 10px 25px rgba(0,0,0,.08);
+}
+
+/* TABLE */
+table{width:100%;border-collapse:collapse;}
+
+th{
+background:#2c3e50;
+color:white;
+padding:12px;
+}
+
+td{
+padding:12px;
+text-align:center;
+border-bottom:1px solid #eee;
+}
+
+tr:hover{background:#fafafa;}
+
+/* BUTTONS */
+button{
+border:none;
+padding:8px 12px;
+border-radius:6px;
+cursor:pointer;
+margin:2px;
+}
+
+.edit{background:#f39c12;color:white;}
+.delete{background:#e74c3c;color:white;}
+
+/* MODAL */
+.modal{
+display:none;
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,.6);
+}
+
+.modal-content{
+background:white;
+width:500px;
+margin:80px auto;
+padding:25px;
+border-radius:12px;
+}
+
+input,select{
+width:100%;
+padding:10px;
+margin-bottom:12px;
+border:1px solid #ddd;
+border-radius:8px;
+}
+
+.save-btn{
+background:#27ae60;
+color:white;
+padding:12px;
+width:100%;
+}
+
+.empty{
+padding:20px;
+text-align:center;
+color:#888;
+font-weight:bold;
+}
+</style>
+</head>
+
+<body>
+
+<div class="sidebar">
+
+<div class="logo">
+<img src="/media/Logo.jpg" onerror="this.style.display='none'">
+</div>
+
+<a href="/">🏠 Dashboard</a>
+<a href="/factures/">📄 Factures</a>
+<a href="/clients/">👥 Clients</a>
+<a href="/produits/">📦 Produits</a>
+<a href="/avitaillement/">⛽ Avitaillement</a>
+<a href="/avitaillement/camions/">🚚 Camions</a>
+<a href="/stocks/">📊 Stocks</a>
+</div>
+
+<div class="main">
+
+<div class="topbar">
+<h1>Gestion des Camions</h1>
+<button class="btn-add" onclick="ouvrirModal()">➕ Nouveau</button>
+</div>
+
+<div class="stats">
+<div class="box">
+<h3>Total Camions</h3>
+<p id="nb">0</p>
+</div>
+
+<div class="box">
+<h3>Disponibles</h3>
+<p id="dispo">0</p>
+</div>
+</div>
+
+<div class="card">
+
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Immatriculation</th>
+<th>Capacité</th>
+<th>Chauffeur</th>
+<th>Statut</th>
+<th>Actions</th>
+</tr>
+</thead>
+
+<tbody id="tableCamions"></tbody>
+
+</table>
+
+</div>
+
+</div>
+
+<!-- MODAL -->
+<div class="modal" id="modal">
+
+<div class="modal-content">
+
+<h2 id="titre">Nouveau Camion</h2>
+
+<input id="immat" placeholder="Immatriculation">
+<input id="capacite" type="number" placeholder="Capacité">
+<input id="chauffeur" placeholder="Chauffeur">
+
+<select id="statut">
+<option value="DISPONIBLE">Disponible</option>
+<option value="EN_MISSION">En mission</option>
+<option value="MAINTENANCE">Maintenance</option>
+</select>
+
+<button class="save-btn" onclick="save()">💾 Enregistrer</button>
+<button onclick="closeModal()">❌ Fermer</button>
+
+</div>
+
+</div>
+
+<script>
+
+let editId=null;
+
+charger();
+
+function charger(){
+fetch("/api/camions/")
+.then(r=>r.json())
+.then(data=>{
+
+let html="";
+let dispo=0;
+
+if(data.length===0){
+html=`<tr><td colspan="6" class="empty">Aucun camion</td></tr>`;
+}
+
+data.forEach(c=>{
+
+if(c.statut==="DISPONIBLE") dispo++;
+
+html+=`
+<tr>
+<td>${c.id}</td>
+<td>${c.immatriculation}</td>
+<td>${c.capacite} L</td>
+<td>${c.chauffeur||''}</td>
+<td>${c.statut}</td>
+
+<td>
+<button class="edit" onclick="edit(${c.id})">✏️</button>
+<button class="delete" onclick="del(${c.id})">🗑️</button>
+</td>
+</tr>`;
+});
+
+document.getElementById("tableCamions").innerHTML=html;
+document.getElementById("nb").innerText=data.length;
+document.getElementById("dispo").innerText=dispo;
+
+});
+}
+
+function ouvrirModal(){
+document.getElementById("modal").style.display="block";
+
+if(!editId){
+immat.value="";
+capacite.value="";
+chauffeur.value="";
+statut.value="DISPONIBLE";
+}
+}
+
+function save(){
+
+let data={
+immatriculation:immat.value,
+capacite:Number(capacite.value),
+chauffeur:chauffeur.value,
+statut:statut.value
+};
+
+let url="/api/camions/";
+let method="POST";
+
+if(editId){
+url=`/api/camions/${editId}/`;
+method="PUT";
+}
+
+fetch(url,{
+method:method,
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify(data)
+})
+.then(()=>{
+charger();
+closeModal();
+});
+}
+
+function edit(id){
+
+fetch(`/api/camions/${id}/`)
+.then(r=>r.json())
+.then(c=>{
+editId=id;
+ouvrirModal();
+
+immat.value=c.immatriculation;
+capacite.value=c.capacite;
+chauffeur.value=c.chauffeur;
+statut.value=c.statut;
+});
+}
+
+function del(id){
+if(confirm("Supprimer ?")){
+fetch(`/api/camions/${id}/`,{method:"DELETE"})
+.then(()=>charger());
+}
+}
+
+function closeModal(){
+document.getElementById("modal").style.display="none";
+editId=null;
+}
+
+</script>
+
+</body>
+</html>

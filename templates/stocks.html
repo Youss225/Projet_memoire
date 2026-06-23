@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Stocks | PETRO DISTRIBUTIONS</title>
+
+<style>
+
+*{margin:0;padding:0;box-sizing:border-box;}
+
+body{
+font-family:Arial,Helvetica,sans-serif;
+background:linear-gradient(135deg,#edf3fb,#dfe9f5,#eef5ff);
+display:flex;
+color:#1f2d3d;
+overflow-x:hidden;
+}
+
+/* =========================
+ANIMATIONS
+========================= */
+
+@keyframes fadeUp{
+from{
+opacity:0;
+transform:translateY(25px);
+}
+to{
+opacity:1;
+transform:translateY(0);
+}
+}
+
+@keyframes pulseGlow{
+0%{box-shadow:0 0 0 rgba(37,99,235,.0);}
+50%{box-shadow:0 0 25px rgba(37,99,235,.25);}
+100%{box-shadow:0 0 0 rgba(37,99,235,.0);}
+}
+
+@keyframes slideIn{
+from{
+opacity:0;
+transform:translateY(-40px) scale(.95);
+}
+to{
+opacity:1;
+transform:translateY(0) scale(1);
+}
+}
+
+/* SIDEBAR */
+
+.sidebar{
+width:260px;
+background:linear-gradient(180deg,#0f1c2a,#1f2d3d,#13202f);
+color:#fff;
+min-height:100vh;
+position:fixed;
+left:0;top:0;
+padding:25px 18px;
+box-shadow:8px 0 25px rgba(0,0,0,.15);
+}
+
+.logo{
+text-align:center;
+margin-bottom:25px;
+}
+
+.logo img{
+width:130px;
+border-radius:12px;
+background:rgba(255,255,255,.1);
+padding:6px;
+}
+
+.sidebar a{
+display:block;
+color:#dbeafe;
+text-decoration:none;
+padding:14px;
+border-radius:12px;
+margin-bottom:10px;
+font-weight:bold;
+transition:.3s;
+}
+
+.sidebar a:hover{
+background:linear-gradient(90deg,#2563eb,#06b6d4);
+transform:translateX(5px);
+color:white;
+}
+
+/* MAIN */
+
+.main{
+margin-left:260px;
+width:100%;
+padding:35px;
+animation:fadeUp .8s ease;
+}
+
+/* TOPBAR */
+
+.topbar{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:25px;
+}
+
+.topbar h1{
+font-size:30px;
+font-weight:800;
+}
+
+/* STATS */
+
+.stats{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+gap:18px;
+margin-bottom:25px;
+}
+
+.box{
+background:white;
+padding:20px;
+border-radius:16px;
+box-shadow:0 10px 25px rgba(0,0,0,.08);
+}
+
+.box h3{
+font-size:14px;
+color:#7f8c8d;
+margin-bottom:10px;
+}
+
+.box p{
+font-size:26px;
+font-weight:bold;
+}
+
+/* STOCK CARDS */
+
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+gap:20px;
+}
+
+.card{
+background:white;
+padding:20px;
+border-radius:18px;
+box-shadow:0 12px 30px rgba(0,0,0,.08);
+transition:.3s;
+}
+
+.card:hover{
+transform:translateY(-5px);
+}
+
+.bar{
+height:20px;
+border-radius:10px;
+background:#e5e9f0;
+overflow:hidden;
+margin-top:10px;
+}
+
+.fill{
+height:100%;
+background:linear-gradient(90deg,#27ae60,#2ecc71);
+}
+
+.low{
+background:linear-gradient(90deg,#e74c3c,#ff7675);
+}
+
+.warning{
+color:#e74c3c;
+font-weight:bold;
+margin-top:8px;
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+
+<div class="logo">
+<img src="/media/Logo.jpg" onerror="this.style.display='none'">
+</div>
+
+
+{% if request.user.is_superuser %}
+<a href="/">🏠 Dashboard</a>
+<a href="/factures/">📄 Factures</a>
+<a href="/clients/">👥 Clients</a>
+<a href="/produits/">📦 Produits</a>
+<a href="/avitaillement/">⛽ Avitaillements</a>
+{% endif %}
+
+{% if request.user.groups.all.0.name == "Comptable" %}
+<a href="/">🏠 Dashboard</a>
+<a href="/factures/">📄 Factures</a>
+<a href="/clients/">👥 Clients</a>
+{% endif %}
+
+{% if request.user.groups.all.0.name == "Operateurs" %}
+<a href="/">🏠 Dashboard</a>
+<a href="/produits/">📦 Produits</a>
+<a href="/avitaillement/">⛽ Avitaillements</a>
+<a href="/stocks/">📊 Stocks</a>
+{% endif %}
+
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+<div class="topbar">
+<h1>📊 Gestion des Stocks</h1>
+</div>
+
+<!-- STATS -->
+<div class="stats">
+
+<div class="box">
+<h3>Total Produits</h3>
+<p id="nbStocks">0</p>
+</div>
+
+<div class="box">
+<h3>Stock Total</h3>
+<p id="totalStock">0 L</p>
+</div>
+
+<div class="box">
+<h3>Stocks Faibles</h3>
+<p id="nbAlert">0</p>
+</div>
+
+</div>
+
+<!-- LISTE -->
+<div class="grid" id="stocksContainer"></div>
+    
+</div>
+
+<script>
+chargerStocks();
+
+function chargerStocks(){
+
+fetch("/api/stocks/")
+.then(r => r.json())
+.then(data => {
+
+console.log(data);   // <-- ajoute cette ligne
+
+let container = document.getElementById("stocksContainer");
+
+let totalStock = 0;
+let nbAlert = 0;
+
+if(data.length === 0){
+    container.innerHTML = "<p>Aucun stock disponible</p>";
+    return;
+}
+
+let html = "";
+
+data.forEach(s => {
+
+let percent =
+(Number(s.stock_actuel) / Number(s.capacite_totale)) * 100;
+
+let isLow = percent < 30;
+
+if(isLow) nbAlert++;
+
+totalStock += Number(s.stock_actuel);
+
+html += `
+<div class="card">
+<h3>${s.produit_nom}</h3>
+
+<p><b>${s.stock_actuel}</b> / ${s.capacite_totale} L</p>
+
+<div class="bar">
+<div class="fill ${isLow ? 'low' : ''}"
+style="width:${percent}%">
+</div>
+</div>
+
+${isLow ? "<div class='warning'>⚠️ Stock faible</div>" : ""}
+
+</div>
+`;
+
+});
+
+container.innerHTML = html;
+
+document.getElementById("nbStocks").innerText = data.length;
+document.getElementById("totalStock").innerText =
+totalStock.toLocaleString() + " L";
+document.getElementById("nbAlert").innerText = nbAlert;
+
+})
+.catch(err => {
+console.log(err);
+});
+}
+
+</script>
+
+</body>
+</html>

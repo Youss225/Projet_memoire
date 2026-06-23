@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Factures | PETRO DISTRIBUTIONS</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+
+body{
+font-family:Arial,Helvetica,sans-serif;
+background:linear-gradient(135deg,#edf3fb,#dfe9f5,#eef5ff);
+display:flex;
+color:#1f2d3d;
+overflow-x:hidden;
+}
+
+/* Animations */
+@keyframes fadeUp{
+from{opacity:0;transform:translateY(20px);}
+to{opacity:1;transform:translateY(0);}
+}
+
+@keyframes glow{
+0%{box-shadow:0 0 0 rgba(8,113,233,0);}
+50%{box-shadow:0 0 18px rgba(8,113,233,.25);}
+100%{box-shadow:0 0 0 rgba(8,113,233,0);}
+}
+
+/* Sidebar */
+.sidebar{
+width:260px;
+background:linear-gradient(180deg,#0f1c2a,#1f2d3d,#13202f);
+color:#fff;
+min-height:100vh;
+position:fixed;
+left:0;top:0;
+padding:25px 18px;
+overflow:auto;
+box-shadow:8px 0 25px rgba(0,0,0,.15);
+}
+
+.logo{
+text-align:center;
+margin-bottom:28px;
+}
+
+.logo img{
+width:130px;
+border-radius:16px;
+padding:8px;
+background:rgba(255,255,255,.08);
+backdrop-filter:blur(8px);
+transition:.4s;
+}
+
+.logo img:hover{
+transform:scale(1.05);
+}
+
+.sidebar a{
+display:block;
+color:#dbeafe;
+text-decoration:none;
+padding:14px 16px;
+border-radius:14px;
+margin-bottom:10px;
+font-weight:600;
+transition:.3s;
+border:1px solid transparent;
+}
+
+.sidebar a:hover{
+background:linear-gradient(90deg,#2563eb,#06b6d4);
+transform:translateX(6px);
+color:white;
+border-color:rgba(255,255,255,.15);
+}
+
+/* Main */
+.main{
+margin-left:260px;
+width:100%;
+padding:35px;
+animation:fadeUp .8s ease;
+}
+
+.topbar{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:25px;
+gap:10px;
+flex-wrap:wrap;
+}
+
+.topbar h1{
+font-size:32px;
+font-weight:800;
+}
+
+.btn-add{
+background:linear-gradient(90deg,#27ae60,#20c46d);
+color:white;
+padding:14px 22px;
+border:none;
+border-radius:12px;
+cursor:pointer;
+font-weight:bold;
+transition:.3s;
+}
+
+.btn-add:hover{transform:translateY(-4px);}
+
+/* Stats */
+.stats{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+gap:18px;
+margin-bottom:25px;
+}
+
+.box{
+background:rgba(255,255,255,.82);
+padding:24px;
+border-radius:18px;
+box-shadow:0 12px 30px rgba(0,0,0,.08);
+animation:fadeUp .8s ease;
+transition:.3s;
+}
+
+.box:hover{transform:translateY(-6px);}
+
+.box h3{
+font-size:14px;
+color:#778392;
+margin-bottom:10px;
+text-transform:uppercase;
+}
+
+.box p{
+font-size:30px;
+font-weight:800;
+}
+
+/* Card */
+.card{
+background:rgba(255,255,255,.85);
+border-radius:20px;
+padding:22px;
+box-shadow:0 15px 35px rgba(0,0,0,.08);
+overflow:auto;
+}
+
+/* Table */
+table{
+width:100%;
+border-collapse:collapse;
+min-width:950px;
+}
+
+th{
+background:linear-gradient(90deg,#102133,#1f2d3d);
+color:white;
+padding:14px;
+font-size:14px;
+}
+
+td{
+padding:14px;
+text-align:center;
+border-bottom:1px solid #edf1f5;
+font-weight:600;
+}
+
+tr:hover{background:#f7fbff;}
+
+/* Buttons */
+button{
+padding:9px 13px;
+border:none;
+border-radius:10px;
+cursor:pointer;
+font-size:15px;
+margin:2px;
+font-weight:bold;
+transition:.25s;
+}
+
+button:hover{transform:translateY(-3px);}
+
+.edit{background:#f39c12;color:white;}
+.delete{background:#e74c3c;color:white;}
+.pdf{background:#27ae60;color:white;}
+.preview{background:#8e44ad;color:white;}
+
+/* Modal */
+.modal{
+display:none;
+position:fixed;
+left:0;top:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,.55);
+z-index:999;
+overflow:auto;
+}
+
+.modal-content{
+background:white;
+width:950px;
+max-width:95%;
+margin:30px auto;
+padding:30px;
+border-radius:22px;
+animation:fadeUp .4s ease;
+}
+
+.modal-top{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:25px;
+}
+
+.close-btn{
+background:#e74c3c;
+color:white;
+}
+
+/* Form */
+.row{
+display:flex;
+gap:15px;
+margin-bottom:18px;
+flex-wrap:wrap;
+}
+
+.field{
+flex:1;
+min-width:220px;
+display:flex;
+flex-direction:column;
+}
+
+.field label{
+font-size:13px;
+font-weight:bold;
+margin-bottom:7px;
+}
+
+.field input,.field select{
+padding:13px;
+border:1px solid #d9e4ef;
+border-radius:12px;
+font-size:14px;
+outline:none;
+}
+
+.field input:focus,.field select:focus{
+border-color:#0871e9;
+box-shadow:0 0 0 4px rgba(8,113,233,.12);
+}
+
+.section-title{
+font-size:20px;
+font-weight:800;
+margin:22px 0 12px;
+}
+
+.line-btn{
+background:#3498db;
+color:white;
+padding:12px;
+width:100%;
+height:48px;
+margin-top:24px;
+}
+
+.total-box{
+margin-top:18px;
+font-size:30px;
+font-weight:900;
+color:#27ae60;
+text-align:right;
+animation:glow 2s infinite;
+}
+
+.save-btn{
+background:#27ae60;
+color:white;
+padding:16px;
+width:100%;
+font-size:16px;
+margin-top:18px;
+border-radius:14px;
+}
+
+.small-table th{font-size:13px;}
+.small-table td{padding:11px;}
+
+.empty{
+padding:28px;
+color:#7a8898;
+font-weight:bold;
+text-align:center;
+}
+
+@media(max-width:900px){
+.sidebar{width:100%;position:relative;min-height:auto;}
+.main{margin-left:0;padding:20px;}
+table{min-width:700px;}
+}
+</style>
+</head>
+
+<body>
+
+<div class="sidebar">
+<div class="logo">
+<img src="/media/Logo.jpg" onerror="this.style.display='none'">
+</div>
+
+{% if request.user.is_superuser %}
+<a href="/">🏠 Dashboard</a>
+<a href="/factures/">📄 Factures</a>
+<a href="/clients/">👥 Clients</a>
+<a href="/produits/">📦 Produits</a>
+<a href="/avitaillement/">⛽ Avitaillements</a>
+{% endif %}
+
+{% if request.user.groups.all.0.name == "Comptable" %}
+<a href="/">🏠 Dashboard</a>
+<a href="/factures/">📄 Factures</a>
+<a href="/clients/">👥 Clients</a>
+{% endif %}
+
+{% if request.user.groups.all.0.name == "Operateurs" %}
+<a href="/">🏠 Dashboard</a>
+<a href="/produits/">📦 Produits</a>
+<a href="/avitaillement/">⛽ Avitaillements</a>
+{% endif %}
+
+</div>
+<div class="main">
+
+<div class="topbar">
+<h1>Gestion des Factures</h1>
+
+<button class="btn-add" onclick="ouvrirModal()">➕ Nouvelle Facture</button>
+</div>
+
+<div class="stats">
+<div class="box">
+<h3>Total Factures</h3>
+<p id="nbFactures">0</p>
+</div>
+
+<div class="box">
+<h3>Montant Global</h3>
+<p id="montantGlobal">0 FCFA</p>
+</div>
+</div>
+
+<div class="card">
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Référence</th>
+<th>Client</th>
+<th>Date</th>
+<th>Total</th>
+<th>Actions</th>
+</tr>
+</thead>
+
+<tbody id="facturesTable"></tbody>
+</table>
+</div>
+
+</div>
+
+<div class="modal" id="modalFacture">
+
+<div class="modal-content">
+
+<div class="modal-top">
+<h2 id="titreModal">Nouvelle Facture</h2>
+<button class="close-btn" onclick="fermerModal()">❌</button>
+</div>
+
+<div class="row">
+
+<div class="field">
+<label>Référence</label>
+<input type="text" id="reference">
+</div>
+
+<div class="field">
+<label>Client</label>
+<select id="client"></select>
+</div>
+
+</div>
+
+<div class="row">
+
+<div class="field">
+<label>Date Livraison</label>
+<input type="date" id="date_livraison">
+</div>
+
+<div class="field">
+<label>Date Limite</label>
+<input type="date" id="date_limite">
+</div>
+
+</div>
+
+<div class="section-title">Produits</div>
+
+<div class="row">
+
+<div class="field">
+<label>Produit</label>
+<select id="produit"></select>
+</div>
+
+<div class="field">
+<label>Quantité</label>
+<input type="number" id="quantite" value="1">
+</div>
+
+<div class="field">
+<label>Prix</label>
+<input type="number" id="prix">
+</div>
+
+<div class="field">
+<button class="line-btn" onclick="ajouterLigne()">➕ Ajouter</button>
+</div>
+
+</div>
+
+<table class="small-table">
+<thead>
+<tr>
+<th>Produit</th>
+<th>Qté</th>
+<th>Prix</th>
+<th>Montant</th>
+<th></th>
+</tr>
+</thead>
+
+<tbody id="lignesTable"></tbody>
+</table>
+
+<div class="total-box">
+TOTAL : <span id="totalFacture">0</span> FCFA
+</div>
+
+<button class="save-btn" onclick="enregistrerFacture()">💾 Enregistrer</button>
+
+</div>
+</div>
+
+<script>
+let lignes = [];
+let editId = null;
+
+function getCookie(name) {
+
+let cookieValue = null;
+
+if (document.cookie && document.cookie !== "") {
+
+const cookies = document.cookie.split(";");
+
+for (let i = 0; i < cookies.length; i++) {
+
+const cookie = cookies[i].trim();
+
+if (
+cookie.substring(0, name.length + 1) ===
+(name + "=")
+) {
+
+cookieValue = decodeURIComponent(
+cookie.substring(name.length + 1)
+);
+
+break;
+}
+}
+}
+
+return cookieValue;
+}
+chargerFactures();
+chargerClients();
+chargerProduits();
+
+function chargerFactures(){
+fetch("/api/factures/")
+.then(res=>res.json())
+.then(data=>{
+
+let table=document.getElementById("facturesTable");
+table.innerHTML="";
+
+let totalGlobal=0;
+
+if(data.length===0){
+table.innerHTML=`<tr><td colspan="6" class="empty">Aucune facture disponible</td></tr>`;
+}
+
+data.forEach(f=>{
+
+totalGlobal += Number(f.total||0);
+
+table.innerHTML += `
+<tr>
+<td>${f.id}</td>
+<td>${f.reference||'-'}</td>
+<td>${f.client_nom||f.client}</td>
+<td>${f.date||'-'}</td>
+<td>${Number(f.total||0).toLocaleString()} FCFA</td>
+<td>
+
+<button class="edit" onclick="modifierFacture(${f.id})">✍️</button>
+<button class="delete" onclick="deleteFacture(${f.id})">🗑️</button>
+<button class="preview" onclick="window.open('/factures/${f.id}/preview/','_blank')">👁️</button>
+<button class="pdf" onclick="window.open('/factures/${f.id}/pdf/','_blank')">📄</button>
+
+</td>
+</tr>
+`;
+
+});
+
+document.getElementById("nbFactures").innerText=data.length;
+document.getElementById("montantGlobal").innerText=totalGlobal.toLocaleString()+" FCFA";
+
+});
+}
+
+function chargerClients(){
+fetch("/api/clients/")
+.then(res=>res.json())
+.then(data=>{
+let select=document.getElementById("client");
+select.innerHTML=`<option value="">Choisir client</option>`;
+data.forEach(c=>{
+select.innerHTML += `<option value="${c.id}">${c.nom}</option>`;
+});
+});
+}
+
+function chargerProduits(){
+fetch("/api/produits/")
+.then(res=>res.json())
+.then(data=>{
+let select=document.getElementById("produit");
+select.innerHTML=`<option value="">Choisir produit</option>`;
+data.forEach(p=>{
+select.innerHTML += `<option value="${p.id}" data-prix="${p.prix}">${p.nom}</option>`;
+});
+});
+}
+
+document.getElementById("produit").addEventListener("change",function(){
+let prix=this.options[this.selectedIndex].getAttribute("data-prix");
+document.getElementById("prix").value=prix||"";
+});
+
+function ouvrirModal(){
+document.getElementById("modalFacture").style.display="block";
+
+if(!editId){
+document.getElementById("titreModal").innerText="Nouvelle Facture";
+document.getElementById("reference").value="";
+document.getElementById("client").value="";
+document.getElementById("date_livraison").value="";
+document.getElementById("date_limite").value="";
+lignes=[];
+renderLignes();
+}
+}
+
+function fermerModal(){
+document.getElementById("modalFacture").style.display="none";
+editId=null;
+}
+
+function modifierFacture(id){
+fetch(`/api/factures/${id}/`)
+.then(res=>res.json())
+.then(f=>{
+
+editId=id;
+ouvrirModal();
+
+document.getElementById("titreModal").innerText="Modifier Facture";
+document.getElementById("reference").value=f.reference||"";
+document.getElementById("client").value=f.client;
+document.getElementById("date_livraison").value=f.date_livraison||"";
+document.getElementById("date_limite").value=f.date_limite||"";
+
+lignes=(f.lignes||[]).map(l=>({
+produit:l.produit,
+produit_nom:l.produit_nom,
+quantite:l.quantite,
+prix_unitaire:l.prix_unitaire
+}));
+
+renderLignes();
+
+});
+}
+
+function ajouterLigne(){
+
+let select=document.getElementById("produit");
+
+let produit=select.value;
+let produit_nom=select.options[select.selectedIndex].text;
+let quantite=Number(document.getElementById("quantite").value);
+let prix=Number(document.getElementById("prix").value);
+
+if(!produit){
+alert("Choisir un produit");
+return;
+}
+
+lignes.push({
+produit,
+produit_nom,
+quantite,
+prix_unitaire:prix
+});
+
+renderLignes();
+}
+
+function renderLignes(){
+
+let table=document.getElementById("lignesTable");
+table.innerHTML="";
+
+let total=0;
+
+lignes.forEach((l,index)=>{
+
+let montant=l.quantite*l.prix_unitaire;
+total += montant;
+
+table.innerHTML += `
+<tr>
+<td>${l.produit_nom}</td>
+<td>${l.quantite}</td>
+<td>${Number(l.prix_unitaire).toLocaleString()}</td>
+<td>${montant.toLocaleString()}</td>
+<td>
+<button class="delete" onclick="supprimerLigne(${index})">🗑️</button>
+</td>
+</tr>
+`;
+
+});
+
+document.getElementById("totalFacture").innerText=total.toLocaleString();
+}
+
+function supprimerLigne(index){
+lignes.splice(index,1);
+renderLignes();
+}
+
+function enregistrerFacture(){
+
+if(lignes.length===0){
+alert("Ajoute au moins un produit");
+return;
+}
+
+let clientId = Number(
+document.getElementById("client").value
+);
+
+if(!clientId){
+alert("Choisis un client");
+return;
+}
+
+let data = {
+
+client: clientId,
+
+date_livraison:
+document.getElementById("date_livraison").value,
+
+date_limite:
+document.getElementById("date_limite").value,
+
+lignes: lignes
+
+};
+
+let url = "/api/factures/";
+let method = "POST";
+
+if(editId){
+
+url = `/api/factures/${editId}/`;
+method = "PUT";
+
+}
+
+console.log(
+"DONNEES ENVOYEES :",
+JSON.stringify(data,null,2)
+);
+
+fetch(url,{
+
+method: method,
+
+headers:{
+"Content-Type":"application/json",
+"X-CSRFToken": getCookie("csrftoken")
+},
+
+body: JSON.stringify(data)
+
+})
+
+.then(async response=>{
+
+let result;
+
+try{
+result = await response.json();
+}catch{
+result = {};
+}
+
+console.log("STATUS :",response.status);
+console.log("REPONSE :",result);
+
+if(!response.ok){
+
+alert(
+"❌ Erreur : " +
+JSON.stringify(result)
+);
+
+throw result;
+
+}
+
+return result;
+
+})
+
+.then(()=>{
+
+alert("✅ Facture enregistrée avec succès");
+
+fermerModal();
+
+chargerFactures();
+
+})
+
+.catch(error=>{
+
+console.error(error);
+
+});
+
+}
+
+function deleteFacture(id){
+
+if(confirm("Supprimer cette facture ?")){
+
+fetch(`/api/factures/${id}/`,{
+
+method:"DELETE",
+
+headers:{
+"X-CSRFToken": getCookie("csrftoken")
+}
+
+})
+
+.then(response=>{
+
+if(!response.ok){
+throw new Error("Erreur suppression");
+}
+
+chargerFactures();
+
+})
+
+.catch(error=>{
+
+console.error(error);
+
+alert("Erreur lors de la suppression");
+
+});
+
+}
+
+}
+</script>
+
+{% csrf_token %}
+</body>
+</html>
