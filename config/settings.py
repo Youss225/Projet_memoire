@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'factures',
     'avitaillement',
     'journal',
+    'feedback',
 ]
 
 MEDIA_URL = '/media/'
@@ -156,4 +157,5 @@ ALLOWED_HOSTS = [
     "192.168.5.75",
     "102.142.241.235",
     "192.168.1.108",
+    "192.168.1.117",
 ]

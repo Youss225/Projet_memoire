@@ -382,18 +382,21 @@ transform:translateX(6px);
 <a href="/clients/">👥 Clients</a>
 <a href="/produits/">📦 Produits</a>
 <a href="/avitaillement/">⛽ Avitaillements</a>
+<a href="/feedback/inbox/">📧 Boite de messagerie</a>
 {% endif %}
 
 {% if request.user.groups.all.0.name == "Comptable" %}
 <a href="/">🏠 Dashboard</a>
 <a href="/factures/">📄 Factures</a>
 <a href="/clients/">👥 Clients</a>
+<a href="/feedback/inbox/">📧 Boite de messagerie</a>
 {% endif %}
 
 {% if request.user.groups.all.0.name == "Operateurs" %}
 <a href="/">🏠 Dashboard</a>
 <a href="/produits/">📦 Produits</a>
 <a href="/avitaillement/">⛽ Avitaillements</a>
+<a href="/feedback/inbox/">📧 Boite de messagerie</a>
 {% endif %}
 
 
@@ -447,13 +450,6 @@ et suivi des opérations.
 <h3>Chiffre d'Affaire</h3>
 <div class="number" id="chiffreAffaire">0 FCFA</div>
 <div class="label">Montant total facturé</div>
-</div>
-
-<div class="card red">
-<div class="icon">🧾</div>
-<h3>Stocks</h3>
-<div class="number" id="stocks">0 L</div>
-<div class="label">Quantité des produits restants</div>
 </div>
 
 </div>
